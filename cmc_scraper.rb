@@ -37,9 +37,9 @@ def scrape
 
 	choice = another_selection?
 
-	if choice == 'y'
+	if choice.downcase == 'y'
 		scrape
-	elsif choice == 'n'
+	elsif choice.downcase == 'n'
 		puts "Okay, goodbye!"
 	else
 		puts "Invalid input, make another selection."
