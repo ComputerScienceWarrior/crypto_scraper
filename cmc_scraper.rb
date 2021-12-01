@@ -15,7 +15,11 @@ def scrape
 
 	coin_rows.each.with_index(1) do |coin, index|
 		rows << coin.children[2].css('a')[0].attributes["href"].value
-		puts "#{index}. #{coin.children[2].css('a')[0].attributes["href"].value}"
+		if index.between?(1, 10)
+			puts "#{index}. #{coin.children[2].css('a')[0].css('div p').children[0]}"
+		elsif index.between?(11, 50)
+			puts "#{index}. #{coin.children[2].css('a')[0].children[1].children[0]}"
+		end
 	end
 	
 	selection = gets.to_i - 1
@@ -24,19 +28,29 @@ def scrape
 
 	doc = Nokogiri::HTML(URI.open(currency_url))
 
-
+	coin_name = doc.css('.nameHeader').children[1].children[0]
 	coin_price = doc.css('.priceValue').children[0].children[0]
-	puts coin_price
+	coin_symbol = doc.css('.nameHeader').children[1].children[1].children[0]
+	puts "The current price of #{coin_name} (#{coin_symbol}) is #{coin_price} per coin."
+
 	sleep(2)
-	puts "Would you Like to look at another coin's price? (y/n)"
-	choice = gets.chomp
+
+	choice = another_selection?
 
 	if choice == 'y'
-		puts "Okay, here we go!"
 		scrape
 	elsif choice == 'n'
 		puts "Okay, goodbye!"
 	else
-		puts "Invalid input"
+		puts "Invalid input, make another selection."
+		another_selection?
 	end
 end
+
+def another_selection?
+	puts "Would you like to make another selection? (y/n)"
+	choice = gets.chomp
+	return choice
+end
+
+scrape
