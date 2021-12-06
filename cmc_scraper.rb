@@ -6,19 +6,6 @@ require 'open-uri'
 def scrape
 	rows = [] #rows will hold the 'href' value to append to coinmarketcap.com for level 2 scraping data
 	user_greeting(rows)
-	selection = gets.to_i - 1 #get user's selection of coin
-
-	currency_url = 'https://coinmarketcap.com' +  rows[selection]
-
-	doc = Nokogiri::HTML(URI.open(currency_url))
-
-	coin_name = doc.css('.nameHeader').children[1].children[0]
-	coin_price = doc.css('.priceValue').children[0].children[0]
-	coin_symbol = doc.css('.nameHeader').children[1].children[1].children[0]
-	puts "The current price of #{coin_name} (#{coin_symbol}) is #{coin_price} per coin."
-
-	sleep(2)
-
 	choice = another_selection?
 
 	if choice.downcase == 'y'
@@ -33,7 +20,7 @@ end
 
 def another_selection?
 	puts "Would you like to make another selection? (y/n)"
-	choice = gets.chomp
+	choice = gets.chomp.downcase
 end
 
 def coin_or_number?(rows)
@@ -57,16 +44,23 @@ def coin_or_number?(rows)
 		puts "The current price of #{coin_name} (#{coin_symbol}) is #{coin_price} per coin."
 		sleep(2)
 
-		choice = another_selection?
 	elsif input == 'coin' || input == 'c'
-		puts "Please Select a Currency by it's name."
+		puts "Please enter the name of a currency."
 		sleep(3)
 		scrape_data(rows, 'c')
-		selection = gets.chomp
+		selection = gets.chomp.downcase
 
-		puts rows
+		if rows.include?(selection)
+			puts "You've selected #{selection}."
+			puts "What would you like to know about #{selection}?"
+			options = ["1. Coin Price", "2. % up in last 24 hours.", "3. Circulating Supply", "4. More options..."]
 
+			circulating_supply = doc.css('.statsBlockInner .statsValue').children[0]
+			coin_price = doc.css('.priceValue').children[0].children[0]
+			coin_symbol = doc.css('.nameHeader').children[1].children[1].children[0]
 
+			more_options = [] #will be fill with additional options to look up.
+		end
 	else
 		puts "Invalid input, please make a proper selection based on instructions.."
 		coin_or_number?
